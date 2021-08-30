@@ -11,6 +11,20 @@ const state = ['attack', 'release'].reduce((result, id) => {
   return setState()
 }, {})
 
+function play (oscillator, sweep, key) {
+  const { currentTime } = oscillator.context
+
+  sweep.gain.cancelScheduledValues(currentTime)
+  sweep.gain.setTargetAtTime(0, currentTime, 0)
+  sweep.gain.linearRampToValueAtTime(1, currentTime + state.attack)
+
+  oscillator.frequency.setTargetAtTime(
+    Math.pow(2, (key - 69) / 12) * 440,
+    currentTime,
+    0
+  )
+}
+
 function connect (device) {
   const context = new AudioContext()
   const oscillator = context.createOscillator()
@@ -20,6 +34,7 @@ function connect (device) {
 
   oscillator.setPeriodicWave(wave)
   oscillator.connect(sweep).connect(context.destination)
+  oscillator.start(0)
 
   device.addEventListener('midimessage', event => {
     const [command, key, velocity] = event.data
@@ -28,19 +43,11 @@ function connect (device) {
       case 0x80:
         return context.suspend()
       case 0x90:
-        sweep.gain.cancelScheduledValues(context.currentTime)
-        sweep.gain.setTargetAtTime(0, context.currentTime, 0)
-        sweep.gain.linearRampToValueAtTime(1, context.currentTime + state.attack)
-
-        oscillator.frequency.setTargetAtTime(
-          Math.pow(2, (key - 69) / 12) * 440,
-          context.currentTime, 0
-        )
+        play(oscillator, sweep, key)
 
         if (isStarted) {
           context.resume()
         } else {
-          oscillator.start(0)
           isStarted = true
         }
     }
