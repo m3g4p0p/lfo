@@ -4,7 +4,26 @@ import fuzz from './Guitar_Fuzz.js'
 export class Synthie {
   constructor () {
     this.context = new AudioContext()
-    this.pressed = {}
+    this.osc = this.context.createOscillator()
+    this.lfo = this.context.createOscillator()
+    this.lfoGain = this.context.createGain()
+    this.sweep = this.context.createGain()
+    this.key = null
+
+    this.osc.type = 'sine'
+    this.osc.start()
+
+    this.sweep.gain.setValueAtTime(0, 0)
+
+    this.lfo.type = 'sawtooth'
+    this.lfo.frequency.setValueAtTime(2, 0)
+    this.lfo.connect(this.lfoGain.gain)
+    this.lfo.start()
+
+    this.osc
+      .connect(this.sweep)
+      .connect(this.lfoGain)
+      .connect(this.context.destination)
   }
 
   connect (device) {
@@ -23,54 +42,21 @@ export class Synthie {
   }
 
   play (key) {
-    if (this.pressed[key]) {
-      this.stop(key)
-    }
-
     const { currentTime } = this.context
-    const oscillator = this.context.createOscillator()
-    const lfo = this.context.createOscillator()
-    const wave = this.context.createPeriodicWave(fuzz.real, fuzz.imag)
-    const sweep = this.context.createGain()
-    const frequency = toFrequency(key)
 
-    sweep.gain.cancelScheduledValues(currentTime)
-    sweep.gain.setTargetAtTime(0, currentTime, 0)
-    sweep.gain.linearRampToValueAtTime(1, currentTime + state.attack)
-    sweep.connect(this.context.destination)
-
-    oscillator.setPeriodicWave(wave)
-    oscillator.frequency.setValueAtTime(frequency, currentTime)
-    oscillator.connect(sweep)
-    oscillator.start(currentTime)
-
-    lfo.type = 'sine'
-    lfo.frequency.setValueAtTime(frequency / 2, currentTime)
-    lfo.connect(sweep)
-    lfo.start(currentTime)
-
-    this.pressed[key] = { oscillator, lfo, sweep }
+    this.key = key
+    this.sweep.gain.cancelScheduledValues(currentTime)
+    this.sweep.gain.setValueAtTime(0, currentTime)
+    this.sweep.gain.linearRampToValueAtTime(1, currentTime + state.attack)
+    this.osc.frequency.setValueAtTime(toFrequency(key), currentTime)
   }
 
   stop (key) {
-    if (!this.pressed[key]) {
+    if (key !== this.key) {
       return
     }
 
-    const { oscillator, lfo, sweep } = this.pressed[key]
     const { currentTime } = this.context
-    const endTime = currentTime + state.release
-
-    oscillator.stop(endTime)
-    lfo.stop(endTime)
-    sweep.gain.linearRampToValueAtTime(0, endTime)
-
-    window.setTimeout(() => {
-      oscillator.disconnect()
-      sweep.disconnect()
-      lfo.disconnect()
-    }, state.release * 1000)
-
-    delete this.pressed[key]
+    this.sweep.gain.linearRampToValueAtTime(0, currentTime + state.release)
   }
 }
