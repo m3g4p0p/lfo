@@ -11,6 +11,11 @@ const state = ['attack', 'release'].reduce((result, id) => {
   return setState()
 }, {})
 
+/**
+ * @param {OscillatorNode} oscillator
+ * @param {GainNode} sweep
+ * @param {number} key
+ */
 function play (oscillator, sweep, key) {
   const { currentTime } = oscillator.context
 
@@ -30,26 +35,25 @@ function connect (device) {
   const oscillator = context.createOscillator()
   const wave = context.createPeriodicWave(fuzz.real, fuzz.imag)
   const sweep = context.createGain()
-  let isStarted = false
+  let handle = null
 
+  context.suspend()
   oscillator.setPeriodicWave(wave)
   oscillator.connect(sweep).connect(context.destination)
   oscillator.start(0)
 
   device.addEventListener('midimessage', event => {
     const [command, key, velocity] = event.data
+    window.clearTimeout(handle)
 
     switch (command) {
       case 0x80:
-        return context.suspend()
+        sweep.gain.linearRampToValueAtTime(0, context.currentTime + state.release)
+        handle = window.setTimeout(() => context.suspend(), state.release * 1000)
+        return
       case 0x90:
         play(oscillator, sweep, key)
-
-        if (isStarted) {
-          context.resume()
-        } else {
-          isStarted = true
-        }
+        context.resume()
     }
 
     console.log(event.data)
