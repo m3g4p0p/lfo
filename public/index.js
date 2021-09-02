@@ -1,4 +1,4 @@
-import { Synthie } from './single-osc.js'
+import { Synthie } from './multi-osc-lfo.js'
 
 navigator.requestMIDIAccess().then(access => {
   let button
