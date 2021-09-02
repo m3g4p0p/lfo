@@ -15,7 +15,7 @@ export class Synthie {
     this.key = null
 
     this.osc.type = 'sine'
-    this.osc.connect(this.sweep)
+    this.osc.connect(this.lfoGain)
     this.osc.start()
 
     this.lfo.type = 'sawtooth'
@@ -23,10 +23,10 @@ export class Synthie {
     this.lfo.connect(this.lfoGain.gain)
     this.lfo.start()
 
+    this.lfoGain.connect(this.sweep)
     this.sweep.gain.setValueAtTime(0, 0)
-    this.sweep.connect(this.lfoGain)
-    this.lfoGain.connect(this.analyzer)
-    this.lfoGain.connect(this.context.destination)
+    this.sweep.connect(this.analyzer)
+    this.sweep.connect(this.context.destination)
 
     this.analyzer.fftSize = 2048
     this.canvasCtx.fillStyle = 'rgb(0, 0, 0)'
