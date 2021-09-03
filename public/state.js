@@ -1,11 +1,20 @@
-import { parseNumber, hasOwnProperty } from './util.js'
+import { parseNumber, hasOwnProperty, isMulti } from './util.js'
 
-export function initState (containerId) {
-  const container = document.getElementById(containerId)
-  const controls = Array.from(container.elements)
+function getControlState (control) {
+  if (control instanceof HTMLFieldSetElement) {
+    return initState(control, false)
+  }
 
-  return controls.reduce((result, control) => {
-    const isMultiControl = control.name.slice(-2) === '[]'
+  return parseNumber(control.value)
+}
+
+export function initState (containerId, allowMulti = true) {
+  const container = typeof containerId === 'string'
+    ? document.getElementById(containerId)
+    : containerId
+
+  return Array.from(container.elements).reduce((result, control) => {
+    const isMultiControl = allowMulti && isMulti(control)
     const key = control.name.replace(/\[\]$/, '')
 
     if (hasOwnProperty(result, key)) {
@@ -15,14 +24,14 @@ export function initState (containerId) {
     return Object.defineProperty(result, key, {
       get () {
         if (!isMultiControl) {
-          return parseNumber(control.value)
+          return getControlState(control)
         }
 
         const controls = container.elements[control.name]
 
         return Array.from(
           controls instanceof RadioNodeList ? controls : [controls],
-          current => parseNumber(current.value)
+          current => getControlState(current)
         )
       }
     })

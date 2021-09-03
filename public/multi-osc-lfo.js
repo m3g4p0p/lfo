@@ -14,7 +14,7 @@ export class Synthie {
     this.state = initState('controls')
     this.playing = {}
 
-    this.lfo.type = 'sawtooth'
+    this.lfo.type = 'sine'
     this.lfo.frequency.setValueAtTime(2, 0)
     this.lfo.connect(this.lfoGain.gain)
     this.lfo.start()
@@ -55,25 +55,29 @@ export class Synthie {
     }
 
     const { currentTime } = this.context
-    const { attack, waveforms } = this.state
+    const { attack, oscillators } = this.state
     const sweep = this.context.createGain()
 
     sweep.gain.setValueAtTime(0, currentTime)
     sweep.gain.linearRampToValueAtTime(1, currentTime + attack)
     sweep.connect(this.lfoGain)
 
-    const oscillators = waveforms.map(waveform => {
-      const osc = this.context.createOscillator()
+    this.playing[key] = {
+      sweep,
+      oscillators: oscillators.map(({
+        waveform,
+        octave
+      }) => {
+        const osc = this.context.createOscillator()
 
-      osc.type = waveform
-      osc.frequency.setValueAtTime(toFrequency(key), currentTime)
-      osc.connect(sweep)
-      osc.start()
+        osc.type = waveform
+        osc.frequency.setValueAtTime(toFrequency(key, octave), currentTime)
+        osc.connect(sweep)
+        osc.start()
 
-      return osc
-    })
-
-    this.playing[key] = { oscillators, sweep }
+        return osc
+      })
+    }
   }
 
   stop (key) {
@@ -90,8 +94,9 @@ export class Synthie {
 
     window.setTimeout(() => {
       oscillators.forEach(osc => osc.stop())
-      delete this.playing[key]
     }, release * 1000)
+
+    delete this.playing[key]
   }
 
   draw () {

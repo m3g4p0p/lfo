@@ -23,13 +23,16 @@
       <label class="control">
         <span>Waveform</span>
 
-        <div>
-          <select name="waveforms[]">
-            <option value="sine">Sine</option>
-            <option value="square">Square</option>
-            <option value="sawtooth">Sawtooth</option>
-          </select>
-        </div>
+        <select name="waveform[]">
+          <option value="sine">Sine</option>
+          <option value="square">Square</option>
+          <option value="sawtooth">Sawtooth</option>
+        </select>
+      </label>
+
+      <label class="control">
+        <span>Octave</span>
+        <input name="octave[]" type="range" min="-3" max="3" value="0" step="1">
       </label>
 
       <div class="actions">
