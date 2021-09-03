@@ -14,6 +14,7 @@ label span {
   border: 1px solid red;
 }
 
+fieldset,
 .controls {
   display: inline-flex;
   flex-direction: column;
@@ -25,8 +26,10 @@ label span {
   margin: 1em;
 }
 
-.control-container {
+fieldset {
   position: relative;
+  border: none;
+  padding: 0;
 }
 
 .actions {

@@ -27,7 +27,7 @@ function createButton (device) {
  * @param {HTMLAnchorElement} element
  */
 function cloneControl (element) {
-  const container = element.closest('.control-container')
+  const container = element.closest('fieldset')
 
   container.parentElement.insertBefore(
     container.cloneNode(true),
@@ -35,7 +35,7 @@ function cloneControl (element) {
   )
 
   document
-    .querySelectorAll(`[data-id="${container.dataset.id}"] .remove`)
+    .querySelectorAll(`[name="${container.name}"] .remove`)
     .forEach(current => {
       current.hidden = false
     })
@@ -45,12 +45,12 @@ function cloneControl (element) {
  * @param {HTMLAnchorElement} element
  */
 function removeControl (element) {
-  const container = element.closest('.control-container')
+  const container = element.closest('fieldset')
 
   container.parentElement.removeChild(container)
 
   document
-    .querySelectorAll(`[data-id="${container.dataset.id}"] .remove`)
+    .querySelectorAll(`[name="${container.name}"] .remove`)
     .forEach((current, index, all) => {
       current.hidden = all.length === 1
     })
