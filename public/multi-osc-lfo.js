@@ -58,7 +58,11 @@ export class Synthie {
     const { attack, oscillators, lfo } = this.state
     const sweep = this.context.createGain()
 
-    if (this.lfo.frequency.value !== lfo.frequency) {
+    if (
+      this.lfo.type !== lfo.waveform ||
+      this.lfo.frequency.value !== lfo.frequency
+    ) {
+      this.lfo.type = lfo.waveform
       this.lfo.frequency.setValueAtTime(lfo.frequency, currentTime)
     }
 
