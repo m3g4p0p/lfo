@@ -1,4 +1,5 @@
-import { state, toFrequency } from './util.js'
+import { toFrequency } from './util.js'
+import { initState } from './state.js'
 import fuzz from './Guitar_Fuzz.js'
 
 export class Synthie {
@@ -10,6 +11,7 @@ export class Synthie {
     /** @type {HTMLCanvasElement} */
     this.canvas = document.getElementById('wave')
     this.canvasCtx = this.canvas.getContext('2d')
+    this.state = initState('controls')
     this.playing = {}
 
     this.lfo.type = 'sawtooth'
@@ -55,14 +57,15 @@ export class Synthie {
     }
 
     const { currentTime } = this.context
+    const { attack, waveform } = this.state
     const osc = this.context.createOscillator()
     const sweep = this.context.createGain()
 
     sweep.gain.setValueAtTime(0, currentTime)
-    sweep.gain.linearRampToValueAtTime(1, currentTime + state.attack)
+    sweep.gain.linearRampToValueAtTime(1, currentTime + attack)
     sweep.connect(this.lfoGain)
 
-    osc.type = state.waveform
+    osc.type = waveform
     osc.frequency.setValueAtTime(toFrequency(key), currentTime)
     osc.connect(sweep)
     osc.start()
@@ -77,10 +80,11 @@ export class Synthie {
 
     const { currentTime } = this.context
     const { osc, sweep } = this.playing[key]
+    const { release } = this.state
 
     sweep.gain.cancelScheduledValues(currentTime)
-    sweep.gain.linearRampToValueAtTime(0, currentTime + state.release)
-    window.setTimeout(() => osc.stop(), state.release * 1000)
+    sweep.gain.linearRampToValueAtTime(0, currentTime + release)
+    window.setTimeout(() => osc.stop(), release * 1000)
 
     delete this.playing[key]
   }

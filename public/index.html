@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="controls">
+  <form class="controls" id="controls">
     <div class="control">
       <label for="attack">Attack</label>
       <input name="attack" id="attack" type="range" min="0" max="1" value="0.2" step="0.1">
@@ -28,7 +28,7 @@
         <option value="sawtooth">Sawtooth</option>
       </select>
     </div>
-  </div>
+  </form>
 
   <canvas id="wave" width="800" height="400"></canvas>
 
