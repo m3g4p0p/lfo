@@ -2,6 +2,10 @@ body {
   font-family: 'Courier New', Courier, monospace;
 }
 
+canvas {
+  display: block;
+}
+
 select {
   min-width: 150px;
 }
