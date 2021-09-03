@@ -62,7 +62,7 @@ export class Synthie {
     sweep.gain.linearRampToValueAtTime(1, currentTime + state.attack)
     sweep.connect(this.lfoGain)
 
-    osc.type = 'sine'
+    osc.type = state.waveform
     osc.frequency.setValueAtTime(toFrequency(key), currentTime)
     osc.connect(sweep)
     osc.start()

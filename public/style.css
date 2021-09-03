@@ -3,6 +3,21 @@ button {
   margin: 1em;
 }
 
+label {
+  margin-right: 1em;
+}
+
 .active {
   border: 1px solid red;
+}
+
+.controls {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.control {
+  display: flex;
+  justify-content: space-between;
+  margin: 1em;
 }

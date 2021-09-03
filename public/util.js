@@ -1,8 +1,13 @@
-export const state = ['attack', 'release'].reduce((result, id) => {
-  const control = document.getElementById(id)
+function parseNumber (value) {
+  const number = Number(value)
+  return Number.isNaN(number) ? value : number
+}
 
+export const state = Array.from(
+  document.querySelectorAll('.control input, .control select')
+).reduce((result, control) => {
   const setState = () => Object.assign(result, {
-    [id]: Number(control.value)
+    [control.id]: parseNumber(control.value)
   })
 
   control.addEventListener('input', setState)
