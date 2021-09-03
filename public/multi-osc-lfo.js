@@ -30,6 +30,12 @@ export class Synthie {
 
   connect (device) {
     device.addEventListener('midimessage', this)
+    this.context.resume()
+  }
+
+  disconnect (device) {
+    device.removeEventListener('midimessage', this)
+    this.context.suspend()
   }
 
   handleEvent (event) {

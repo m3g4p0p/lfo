@@ -2,3 +2,7 @@ button {
   display: block;
   margin: 1em;
 }
+
+.active {
+  border: 1px solid red;
+}
