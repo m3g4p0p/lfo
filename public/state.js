@@ -5,7 +5,7 @@ export function initState (containerId) {
   const controls = Array.from(container.elements)
 
   return controls.reduce((result, control) => {
-    return Object.defineProperty(result, control.id, {
+    return Object.defineProperty(result, control.name, {
       get () {
         return parseNumber(control.value)
       }
