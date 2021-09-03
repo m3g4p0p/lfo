@@ -27,19 +27,33 @@ function createButton (device) {
  * @param {HTMLAnchorElement} element
  */
 function cloneControl (element) {
-  const constainer = element.closest('.removable')
+  const container = element.closest('.control-container')
 
-  constainer.parentElement.insertBefore(
-    constainer.cloneNode(true),
-    constainer.nextElementSibling
+  container.parentElement.insertBefore(
+    container.cloneNode(true),
+    container.nextElementSibling
   )
+
+  document
+    .querySelectorAll(`[data-id="${container.dataset.id}"] .remove`)
+    .forEach(current => {
+      current.hidden = false
+    })
 }
 
 /**
  * @param {HTMLAnchorElement} element
  */
 function removeControl (element) {
-  element.closest('.removable').remove()
+  const container = element.closest('.control-container')
+
+  container.parentElement.removeChild(container)
+
+  document
+    .querySelectorAll(`[data-id="${container.dataset.id}"] .remove`)
+    .forEach((current, index, all) => {
+      current.hidden = all.length === 1
+    })
 }
 
 navigator.requestMIDIAccess().then(access => {
