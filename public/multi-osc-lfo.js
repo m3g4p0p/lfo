@@ -55,8 +55,12 @@ export class Synthie {
     }
 
     const { currentTime } = this.context
-    const { attack, oscillators } = this.state
+    const { attack, oscillators, lfo } = this.state
     const sweep = this.context.createGain()
+
+    if (this.lfo.frequency.value !== lfo.frequency) {
+      this.lfo.frequency.setValueAtTime(lfo.frequency, currentTime)
+    }
 
     sweep.gain.setValueAtTime(0, currentTime)
     sweep.gain.linearRampToValueAtTime(1, currentTime + attack)

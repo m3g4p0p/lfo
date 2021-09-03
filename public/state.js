@@ -5,6 +5,10 @@ function getControlState (control) {
     return initState(control, false)
   }
 
+  if (control.type === 'checkbox') {
+    return control.checked
+  }
+
   return parseNumber(control.value)
 }
 

@@ -20,6 +20,11 @@ fieldset,
   flex-direction: column;
 }
 
+fieldset,
+legend {
+  margin: 1em 0;
+}
+
 .control {
   display: flex;
   justify-content: space-between;
