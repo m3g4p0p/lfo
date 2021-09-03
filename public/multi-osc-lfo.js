@@ -32,12 +32,10 @@ export class Synthie {
 
   connect (device) {
     device.addEventListener('midimessage', this)
-    this.context.resume()
   }
 
   disconnect (device) {
     device.removeEventListener('midimessage', this)
-    this.context.suspend()
   }
 
   handleEvent (event) {
@@ -57,20 +55,25 @@ export class Synthie {
     }
 
     const { currentTime } = this.context
-    const { attack, waveform } = this.state
-    const osc = this.context.createOscillator()
+    const { attack, waveforms } = this.state
     const sweep = this.context.createGain()
 
     sweep.gain.setValueAtTime(0, currentTime)
     sweep.gain.linearRampToValueAtTime(1, currentTime + attack)
     sweep.connect(this.lfoGain)
 
-    osc.type = waveform
-    osc.frequency.setValueAtTime(toFrequency(key), currentTime)
-    osc.connect(sweep)
-    osc.start()
+    const oscillators = waveforms.map(waveform => {
+      const osc = this.context.createOscillator()
 
-    this.playing[key] = { osc, sweep }
+      osc.type = waveform
+      osc.frequency.setValueAtTime(toFrequency(key), currentTime)
+      osc.connect(sweep)
+      osc.start()
+
+      return osc
+    })
+
+    this.playing[key] = { oscillators, sweep }
   }
 
   stop (key) {
@@ -79,14 +82,16 @@ export class Synthie {
     }
 
     const { currentTime } = this.context
-    const { osc, sweep } = this.playing[key]
+    const { oscillators, sweep } = this.playing[key]
     const { release } = this.state
 
     sweep.gain.cancelScheduledValues(currentTime)
     sweep.gain.linearRampToValueAtTime(0, currentTime + release)
-    window.setTimeout(() => osc.stop(), release * 1000)
 
-    delete this.playing[key]
+    window.setTimeout(() => {
+      oscillators.forEach(osc => osc.stop())
+      delete this.playing[key]
+    }, release * 1000)
   }
 
   draw () {

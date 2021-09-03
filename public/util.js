@@ -6,3 +6,7 @@ export function parseNumber (value) {
 export function toFrequency (key) {
   return Math.pow(2, (key - 69) / 12) * 440
 }
+
+export function hasOwnProperty (object, name) {
+  return Object.prototype.hasOwnProperty.call(object, name)
+}
