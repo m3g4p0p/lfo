@@ -49,26 +49,32 @@ export class Synthie {
   connectGain (source) {
     const { frequency, lfoWaveform } = this.state.lfo
     const { currentTime, destination } = this.context
+    const useLfo = frequency > 0
 
-    if (frequency) {
+    if (useLfo) {
       source.connect(this.lfoGain)
-      this.lfoGain.connect(this.analyzer)
-      this.lfoGain.connect(destination)
     } else {
       source.connect(this.analyzer)
       source.connect(destination)
-      this.lfoGain.disconnect()
     }
 
     if (
-      this.lfo.type !== lfoWaveform ||
-      this.lfo.frequency.value !== frequency
+      this.lfo.type === lfoWaveform &&
+      this.lfo.frequency.value === frequency
     ) {
-      this.lfo.type = lfoWaveform
-      this.lfo.frequency.setValueAtTime(frequency, currentTime)
+      return useLfo
     }
 
-    return frequency > 0
+    if (useLfo) {
+      this.lfo.type = lfoWaveform
+      this.lfo.frequency.setValueAtTime(frequency, currentTime)
+      this.lfoGain.connect(this.analyzer)
+      this.lfoGain.connect(destination)
+    } else {
+      this.lfoGain.disconnect()
+    }
+
+    return useLfo
   }
 
   play (key) {
@@ -79,8 +85,8 @@ export class Synthie {
     const { currentTime } = this.context
     const { attack, oscillators } = this.state
     const sweep = this.context.createGain()
-    const hasLfo = this.connectGain(sweep)
-    const targetGain = (hasLfo ? 0.5 : 1) / oscillators.length
+    const useLfo = this.connectGain(sweep)
+    const targetGain = (useLfo ? 0.5 : 1) / oscillators.length
 
     sweep.gain.setValueAtTime(0, currentTime)
     sweep.gain.linearRampToValueAtTime(targetGain, currentTime + attack)
@@ -119,6 +125,7 @@ export class Synthie {
 
     window.setTimeout(() => {
       oscillators.forEach(osc => osc.stop())
+      sweep.disconnect()
     }, release * 1000)
 
     delete this.playing[key]
