@@ -1,4 +1,4 @@
-import { parseNumber, hasOwnProperty, isMulti } from './util.js'
+import { parseNumber, hasOwnProperty, isMulti, normalizeName } from './util.js'
 
 function getControlState (control) {
   if (control instanceof HTMLFieldSetElement) {
@@ -19,7 +19,7 @@ export function initState (containerId, allowMulti = true) {
 
   return Array.from(container.elements).reduce((result, control) => {
     const isMultiControl = allowMulti && isMulti(control)
-    const key = control.name.replace(/\[\]$/, '')
+    const key = normalizeName(control)
 
     if (hasOwnProperty(result, key)) {
       return result

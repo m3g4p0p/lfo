@@ -10,66 +10,75 @@
 <body>
   <canvas id="wave" width="800" height="400"></canvas>
 
-  <form class="controls" id="controls">
-    <fieldset>
-      <legend>Sweep</legend>
+  <div class="ui">
+    <form class="controls" id="controls">
+      <fieldset>
+        <legend>Sweep</legend>
 
-      <label class="control">
-        <span>Attack</span>
-        <input name="attack" type="range" min="0" max="1" value="0.2" step="0.1">
-      </label>
+        <label class="control">
+          <span>Attack</span>
+          <input name="attack" type="range" min="0" max="1" value="0.2" step="0.1">
+        </label>
 
-      <label class="control">
-        <span>Release</span>
-        <input name="release" type="range" min="0" max="1" value="0.5" step="0.1">
-      </label>
-    </fieldset>
+        <label class="control">
+          <span>Release</span>
+          <input name="release" type="range" min="0" max="1" value="0.5" step="0.1">
+        </label>
+      </fieldset>
 
-    <fieldset name="lfo">
-      <legend>LFO</legend>
+      <fieldset name="lfo">
+        <legend>LFO</legend>
 
-      <label class="control">
-        <span>Waveform</span>
+        <label class="control">
+          <span>Waveform</span>
 
-        <select name="waveform">
-          <option value="sine">Sine</option>
-          <option value="square">Square</option>
-          <option value="sawtooth">Sawtooth</option>
-        </select>
-      </label>
+          <select name="lfo-waveform">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="triangle">Triangle</option>
+          </select>
+        </label>
 
-      <label class="control">
-        <span>Frequency</span>
-        <input name="frequency" type="range" min="0" max="10" value="2" step="0.1">
-      </label>
-    </fieldset>
+        <label class="control">
+          <span>Frequency</span>
+          <input name="frequency" type="range" min="0" max="10" value="2" step="0.1">
+        </label>
+      </fieldset>
 
-    <fieldset name="oscillators[]">
-      <legend>Oscillator</legend>
+      <fieldset name="oscillators[]">
+        <legend>Oscillator</legend>
 
-      <label class="control">
-        <span>Waveform</span>
+        <label class="control">
+          <span>Waveform</span>
 
-        <select name="waveform[]">
-          <option value="sine">Sine</option>
-          <option value="square">Square</option>
-          <option value="sawtooth">Sawtooth</option>
-        </select>
-      </label>
+          <select name="waveform[]">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="triangle">Triangle</option>
+          </select>
+        </label>
 
-      <label class="control">
-        <span>Octave</span>
-        <input name="octave[]" type="range" min="-3" max="3" value="0" step="1">
-      </label>
+        <label class="control">
+          <span>Octave</span>
+          <input name="octave[]" type="range" min="-3" max="3" value="0" step="1">
+        </label>
 
-      <div class="actions">
-        <a href class="add">add</a>
-        <a href class="remove" hidden>remove</a>
-      </div>
-    </fieldset>
-  </form>
+        <label class="control">
+          <span>Pitch</span>
+          <input name="pitch[]" type="range" min="-12" max="12" value="0" step="1">
+        </label>
 
-  <div id="devices" class="devices"></div>
+        <div class="actions">
+          <a href class="add">add</a>
+          <a href class="remove" hidden>remove</a>
+        </div>
+      </fieldset>
+    </form>
+
+    <div id="devices" class="devices"></div>
+  </div>
 
   <script src="index.js" type="module"></script>
 </body>
