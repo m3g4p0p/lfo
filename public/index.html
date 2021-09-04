@@ -18,11 +18,13 @@
         <label class="control">
           <span>Attack</span>
           <input name="attack" type="range" min="0" max="1" value="0.2" step="0.1">
+          <output>0.2</output>
         </label>
 
         <label class="control">
           <span>Release</span>
           <input name="release" type="range" min="0" max="1" value="0.5" step="0.1">
+          <output>0.2</output>
         </label>
       </fieldset>
 
@@ -43,6 +45,7 @@
         <label class="control">
           <span>Frequency</span>
           <input name="frequency" type="range" min="0" max="10" value="2" step="0.1">
+          <output>2.0</output>
         </label>
       </fieldset>
 
@@ -63,16 +66,18 @@
         <label class="control">
           <span>Octave</span>
           <input name="octave[]" type="range" min="-3" max="3" value="0" step="1">
+          <output>0</output>
         </label>
 
         <label class="control">
           <span>Pitch</span>
           <input name="pitch[]" type="range" min="-12" max="12" value="0" step="1">
+          <output>0</output>
         </label>
 
         <div class="actions">
-          <a href class="add">add</a>
-          <a href class="remove" hidden>remove</a>
+          <button type="button" class="add">add</>
+          <button type="button" class="remove" hidden>remove</button>
         </div>
       </fieldset>
     </form>

@@ -17,8 +17,19 @@ canvas {
   background-color: rgba(255, 255, 255, .8);
 }
 
+label span,
+input,
 select {
   min-width: 150px;
+}
+
+select {
+  margin-right: 50px;
+}
+
+output {
+  min-width: 50px;
+  text-align: right;
 }
 
 label span {
@@ -61,8 +72,9 @@ fieldset {
   height: 100%;
 }
 
-.actions a {
+.actions button {
   margin: 1em;
+  font-family: inherit;
 }
 
 .devices button {

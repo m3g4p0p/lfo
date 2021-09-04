@@ -1,3 +1,4 @@
+import { initControls } from './controls.js'
 import { Synthie } from './multi-osc-lfo.js'
 
 const synthie = new Synthie()
@@ -23,39 +24,6 @@ function createButton (device) {
   return button
 }
 
-/**
- * @param {HTMLAnchorElement} element
- */
-function cloneControl (element) {
-  const container = element.closest('fieldset')
-
-  container.parentElement.insertBefore(
-    container.cloneNode(true),
-    container.nextElementSibling
-  )
-
-  document
-    .querySelectorAll(`[name="${container.name}"] .remove`)
-    .forEach(current => {
-      current.hidden = false
-    })
-}
-
-/**
- * @param {HTMLAnchorElement} element
- */
-function removeControl (element) {
-  const container = element.closest('fieldset')
-
-  container.parentElement.removeChild(container)
-
-  document
-    .querySelectorAll(`[name="${container.name}"] .remove`)
-    .forEach((current, index, all) => {
-      current.hidden = all.length === 1
-    })
-}
-
 navigator.requestMIDIAccess().then(access => {
   let button
 
@@ -66,16 +34,4 @@ navigator.requestMIDIAccess().then(access => {
   button.click()
 })
 
-document.body.addEventListener('click', event => {
-  const { target } = event
-
-  if (target.classList.contains('add')) {
-    event.preventDefault()
-    cloneControl(target)
-  }
-
-  if (target.classList.contains('remove')) {
-    event.preventDefault()
-    removeControl(target)
-  }
-})
+initControls('controls')
