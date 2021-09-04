@@ -67,6 +67,8 @@ export class Synthie {
       this.lfo.type = lfoWaveform
       this.lfo.frequency.setValueAtTime(frequency, currentTime)
     }
+
+    return frequency > 0
   }
 
   play (key) {
@@ -77,10 +79,11 @@ export class Synthie {
     const { currentTime } = this.context
     const { attack, oscillators } = this.state
     const sweep = this.context.createGain()
+    const hasLfo = this.connectGain(sweep)
+    const targetGain = (hasLfo ? 0.5 : 1) / oscillators.length
 
     sweep.gain.setValueAtTime(0, currentTime)
-    sweep.gain.linearRampToValueAtTime(1, currentTime + attack)
-    this.connectGain(sweep)
+    sweep.gain.linearRampToValueAtTime(targetGain, currentTime + attack)
 
     this.playing[key] = {
       sweep,
