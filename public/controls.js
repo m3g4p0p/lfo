@@ -48,7 +48,7 @@ function removeControl (target) {
     })
 }
 
-export function initControls (containerId) {
+export function initControls (containerId, state) {
   const container = document.getElementById(containerId)
 
   container.addEventListener('click', event => {
@@ -56,10 +56,12 @@ export function initControls (containerId) {
 
     if (target.classList.contains('add')) {
       cloneControl(target)
+      state.update()
     }
 
     if (target.classList.contains('remove')) {
       removeControl(target)
+      state.update()
     }
   })
 
@@ -69,5 +71,7 @@ export function initControls (containerId) {
     if (output) {
       output.value = event.target.value
     }
+
+    state.update()
   })
 }

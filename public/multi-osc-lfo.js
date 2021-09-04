@@ -1,9 +1,8 @@
 import { toFrequency } from './util.js'
-import { initState } from './state.js'
 import fuzz from './Guitar_Fuzz.js'
 
 export class Synthie {
-  constructor () {
+  constructor (state) {
     this.context = new AudioContext()
     this.lfo = this.context.createOscillator()
     this.lfoGain = this.context.createGain()
@@ -11,7 +10,7 @@ export class Synthie {
     /** @type {HTMLCanvasElement} */
     this.canvas = document.getElementById('wave')
     this.canvasCtx = this.canvas.getContext('2d')
-    this.state = initState('controls')
+    this.state = state
     this.playing = {}
 
     this.lfo.type = 'sine'
@@ -47,7 +46,7 @@ export class Synthie {
   }
 
   connectGain (source) {
-    const { frequency, lfoWaveform } = this.state.lfo
+    const { frequency, lfoWaveform } = this.state.get('lfo')
     const { currentTime, destination } = this.context
     const useLfo = frequency > 0
 
@@ -83,7 +82,7 @@ export class Synthie {
     }
 
     const { currentTime } = this.context
-    const { attack, oscillators } = this.state
+    const { attack, oscillators } = this.state.get()
     const sweep = this.context.createGain()
     const useLfo = this.connectGain(sweep)
     const targetGain = (useLfo ? 0.5 : 1) / oscillators.length
@@ -118,7 +117,7 @@ export class Synthie {
 
     const { currentTime } = this.context
     const { oscillators, sweep } = this.playing[key]
-    const { release } = this.state
+    const { release } = this.state.get()
 
     sweep.gain.cancelScheduledValues(currentTime)
     sweep.gain.linearRampToValueAtTime(0, currentTime + release)

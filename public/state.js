@@ -2,7 +2,7 @@ import { parseNumber, hasOwnProperty, isMulti, normalizeName } from './util.js'
 
 function getControlState (control) {
   if (control instanceof HTMLFieldSetElement) {
-    return initState(control, false)
+    return createState(control, false)
   }
 
   if (control.type === 'checkbox') {
@@ -12,32 +12,42 @@ function getControlState (control) {
   return parseNumber(control.value)
 }
 
-export function initState (containerId, allowMulti = true) {
-  const container = typeof containerId === 'string'
-    ? document.getElementById(containerId)
-    : containerId
+function getMultiState (container, control) {
+  const controls = container.elements[control.name]
 
+  return Array.from(
+    controls instanceof RadioNodeList ? controls : [controls],
+    current => getControlState(current)
+  )
+}
+
+function createState (container, allowMulti = true) {
   return Array.from(container.elements).reduce((result, control) => {
-    const isMultiControl = allowMulti && isMulti(control)
     const key = normalizeName(control)
 
     if (hasOwnProperty(result, key)) {
       return result
     }
 
-    return Object.defineProperty(result, key, {
-      get () {
-        if (!isMultiControl) {
-          return getControlState(control)
-        }
+    const value = allowMulti && isMulti(control)
+      ? getMultiState(container, control)
+      : getControlState(control)
 
-        const controls = container.elements[control.name]
-
-        return Array.from(
-          controls instanceof RadioNodeList ? controls : [controls],
-          current => getControlState(current)
-        )
-      }
-    })
+    return Object.defineProperty(result, key, { value })
   }, {})
+}
+
+export class State {
+  constructor (containerId) {
+    this.container = document.getElementById(containerId)
+    this.update()
+  }
+
+  update () {
+    this._state = createState(this.container)
+  }
+
+  get (key) {
+    return key ? this._state[key] : this._state
+  }
 }
