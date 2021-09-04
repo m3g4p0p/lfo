@@ -1,51 +1,38 @@
-let incId = 0
-
-function updateId (id) {
-  return id.replace(/-\d+$/, '-' + incId)
+function getRemoveActions (container) {
+  return document.querySelectorAll(
+    `[name="${container.name}"] [data-action="remove"]`
+  )
 }
 
-/**
- * @param {HTMLAnchorElement} target
- */
-function cloneControl (target) {
-  const container = target.closest('fieldset')
-  const clone = container.cloneNode(true)
+const actions = {
+  /**
+   * @param {HTMLAnchorElement} target
+   */
+  clone (target) {
+    const container = target.closest('fieldset')
 
-  incId++
+    container.parentElement.insertBefore(
+      container.cloneNode(true),
+      container.nextElementSibling
+    )
 
-  clone.querySelectorAll('[id]').forEach(element => {
-    element.id = updateId(element.id)
-  })
-
-  clone.querySelectorAll('[for]').forEach(element => {
-    element.setAttribute('for', updateId(element.htmlFor))
-  })
-
-  container.parentElement.insertBefore(
-    clone,
-    container.nextElementSibling
-  )
-
-  document
-    .querySelectorAll(`[name="${container.name}"] .remove`)
-    .forEach(current => {
+    getRemoveActions(container).forEach(current => {
       current.hidden = false
     })
-}
+  },
 
-/**
- * @param {HTMLAnchorElement} target
- */
-function removeControl (target) {
-  const container = target.closest('fieldset')
+  /**
+   * @param {HTMLAnchorElement} target
+   */
+  remove (target) {
+    const container = target.closest('fieldset')
 
-  container.parentElement.removeChild(container)
+    container.parentElement.removeChild(container)
 
-  document
-    .querySelectorAll(`[name="${container.name}"] .remove`)
-    .forEach((current, index, all) => {
+    getRemoveActions(container).forEach((current, index, all) => {
       current.hidden = all.length === 1
     })
+  }
 }
 
 export function initControls (containerId, state) {
@@ -53,14 +40,10 @@ export function initControls (containerId, state) {
 
   container.addEventListener('click', event => {
     const { target } = event
+    const { action } = target.dataset
 
-    if (target.classList.contains('add')) {
-      cloneControl(target)
-      state.update()
-    }
-
-    if (target.classList.contains('remove')) {
-      removeControl(target)
+    if (action) {
+      actions[action](target)
       state.update()
     }
   })
