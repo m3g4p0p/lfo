@@ -19,9 +19,6 @@ export class Synthie {
     this.lfo.connect(this.lfoGain.gain)
     this.lfo.start()
 
-    this.lfoGain.connect(this.analyzer)
-    this.lfoGain.connect(this.context.destination)
-
     this.analyzer.fftSize = 2048
     this.canvasCtx.fillStyle = 'rgb(0, 0, 0)'
     this.canvasCtx.strokeStyle = 'rgb(0, 255, 0)'
@@ -49,37 +46,54 @@ export class Synthie {
     }
   }
 
+  connectGain (source) {
+    const { frequency, lfoWaveform } = this.state.lfo
+    const { currentTime, destination } = this.context
+
+    if (frequency) {
+      source.connect(this.lfoGain)
+      this.lfoGain.connect(this.analyzer)
+      this.lfoGain.connect(destination)
+    } else {
+      source.connect(this.analyzer)
+      source.connect(destination)
+      this.lfoGain.disconnect()
+    }
+
+    if (
+      this.lfo.type !== lfoWaveform ||
+      this.lfo.frequency.value !== frequency
+    ) {
+      this.lfo.type = lfoWaveform
+      this.lfo.frequency.setValueAtTime(frequency, currentTime)
+    }
+  }
+
   play (key) {
     if (this.playing[key]) {
       this.stop(key)
     }
 
     const { currentTime } = this.context
-    const { attack, oscillators, lfo } = this.state
+    const { attack, oscillators } = this.state
     const sweep = this.context.createGain()
-
-    if (
-      this.lfo.type !== lfo.waveform ||
-      this.lfo.frequency.value !== lfo.frequency
-    ) {
-      this.lfo.type = lfo.waveform
-      this.lfo.frequency.setValueAtTime(lfo.frequency, currentTime)
-    }
 
     sweep.gain.setValueAtTime(0, currentTime)
     sweep.gain.linearRampToValueAtTime(1, currentTime + attack)
-    sweep.connect(this.lfoGain)
+    this.connectGain(sweep)
 
     this.playing[key] = {
       sweep,
       oscillators: oscillators.map(({
         waveform,
-        octave
+        octave,
+        pitch
       }) => {
         const osc = this.context.createOscillator()
+        const frequency = toFrequency(key + pitch, octave)
 
         osc.type = waveform
-        osc.frequency.setValueAtTime(toFrequency(key, octave), currentTime)
+        osc.frequency.setValueAtTime(frequency, currentTime)
         osc.connect(sweep)
         osc.start()
 

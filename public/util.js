@@ -14,3 +14,9 @@ export function hasOwnProperty (object, name) {
 export function isMulti (control) {
   return control.name.slice(-2) === '[]'
 }
+
+export function normalizeName (control) {
+  return control.name
+    .replace(/\[\]$/, '')
+    .replace(/-(\w)/g, (_, char) => char.toUpperCase())
+}

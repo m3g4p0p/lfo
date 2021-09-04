@@ -1,10 +1,20 @@
 body {
+  margin: 1em;
   font-family: 'Courier New', Courier, monospace;
 }
 
 canvas {
   display: block;
+  position: sticky;
   margin-bottom: 2em;
+  top: 1em;
+  z-index: -1;
+}
+
+.ui {
+  padding: 1em;
+  box-shadow: 0 0 5px 5px rgba(255, 255, 255, .8);
+  background-color: rgba(255, 255, 255, .8);
 }
 
 select {
