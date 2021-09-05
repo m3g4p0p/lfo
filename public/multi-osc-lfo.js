@@ -81,8 +81,6 @@ export class Synthie {
       this.compressor.threshold.setValueAtTime(threshold, currentTime)
       this.compressor.knee.setValueAtTime(knee, currentTime)
     }
-
-    return useLfo
   }
 
   play (key) {
@@ -93,11 +91,10 @@ export class Synthie {
     const { currentTime } = this.context
     const { attack, oscillators } = this.state.get()
     const sweep = this.context.createGain()
-    const useLfo = this.connectSource(sweep)
-    const targetGain = (useLfo ? 0.5 : 1) / oscillators.length
 
     sweep.gain.setValueAtTime(0, currentTime)
-    sweep.gain.linearRampToValueAtTime(targetGain, currentTime + attack)
+    sweep.gain.linearRampToValueAtTime(1, currentTime + attack)
+    this.connectSource(sweep)
 
     this.playing[key] = {
       sweep,
