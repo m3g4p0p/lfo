@@ -25,7 +25,7 @@ const actions = {
     )
 
     getRemoveActions(container).forEach(current => {
-      current.hidden = false
+      current.disabled = false
     })
   },
 
@@ -38,7 +38,7 @@ const actions = {
     container.parentElement.removeChild(container)
 
     getRemoveActions(container).forEach((current, index, all) => {
-      current.hidden = all.length === 1
+      current.disabled = all.length === 1
     })
   }
 }
