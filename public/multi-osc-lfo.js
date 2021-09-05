@@ -7,6 +7,7 @@ export class Synthie {
     this.lfo = this.context.createOscillator()
     this.lfoGain = this.context.createGain()
     this.analyzer = this.context.createAnalyser()
+    this.compressor = this.context.createDynamicsCompressor()
     /** @type {HTMLCanvasElement} */
     this.canvas = document.getElementById('wave')
     this.canvasCtx = this.canvas.getContext('2d')
@@ -17,6 +18,9 @@ export class Synthie {
     this.lfo.frequency.setValueAtTime(2, 0)
     this.lfo.connect(this.lfoGain.gain)
     this.lfo.start()
+
+    this.compressor.connect(this.context.destination)
+    this.compressor.connect(this.analyzer)
 
     this.analyzer.fftSize = 2048
     this.canvasCtx.fillStyle = 'rgb(0, 0, 0)'
@@ -47,14 +51,13 @@ export class Synthie {
 
   connectGain (source) {
     const { frequency, lfoWaveform } = this.state.get('lfo')
-    const { currentTime, destination } = this.context
+    const { currentTime } = this.context
     const useLfo = frequency > 0
 
     if (useLfo) {
       source.connect(this.lfoGain)
     } else {
-      source.connect(this.analyzer)
-      source.connect(destination)
+      source.connect(this.compressor)
     }
 
     if (
@@ -67,8 +70,7 @@ export class Synthie {
     if (useLfo) {
       this.lfo.type = lfoWaveform
       this.lfo.frequency.setValueAtTime(frequency, currentTime)
-      this.lfoGain.connect(this.analyzer)
-      this.lfoGain.connect(destination)
+      this.lfoGain.connect(this.compressor)
     } else {
       this.lfoGain.disconnect()
     }
