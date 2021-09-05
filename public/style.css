@@ -9,6 +9,7 @@ canvas {
   margin-bottom: 2em;
   top: 1em;
   z-index: -1;
+  border-radius: 50%;
 }
 
 .ui {
