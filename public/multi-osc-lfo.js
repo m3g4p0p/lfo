@@ -49,8 +49,9 @@ export class Synthie {
     }
   }
 
-  connectGain (source) {
+  connectSource (source) {
     const { frequency, lfoWaveform } = this.state.get('lfo')
+    const { threshold } = this.state.get('compressor')
     const { currentTime } = this.context
     const useLfo = frequency > 0
 
@@ -61,18 +62,22 @@ export class Synthie {
     }
 
     if (
-      this.lfo.type === lfoWaveform &&
-      this.lfo.frequency.value === frequency
+      this.lfo.type !== lfoWaveform ||
+      this.lfo.frequency.value !== frequency
     ) {
-      return useLfo
+      if (useLfo) {
+        this.lfo.type = lfoWaveform
+        this.lfo.frequency.setValueAtTime(frequency, currentTime)
+        this.lfoGain.connect(this.compressor)
+      } else {
+        this.lfoGain.disconnect()
+      }
     }
 
-    if (useLfo) {
-      this.lfo.type = lfoWaveform
-      this.lfo.frequency.setValueAtTime(frequency, currentTime)
-      this.lfoGain.connect(this.compressor)
-    } else {
-      this.lfoGain.disconnect()
+    if (
+      this.compressor.threshold.value !== threshold
+    ) {
+      this.compressor.threshold.setValueAtTime(threshold, currentTime)
     }
 
     return useLfo
@@ -86,7 +91,7 @@ export class Synthie {
     const { currentTime } = this.context
     const { attack, oscillators } = this.state.get()
     const sweep = this.context.createGain()
-    const useLfo = this.connectGain(sweep)
+    const useLfo = this.connectSource(sweep)
     const targetGain = (useLfo ? 0.5 : 1) / oscillators.length
 
     sweep.gain.setValueAtTime(0, currentTime)
