@@ -51,7 +51,7 @@ export class Synthie {
 
   connectSource (source) {
     const { frequency, lfoWaveform } = this.state.get('lfo')
-    const { threshold } = this.state.get('compressor')
+    const { threshold, knee } = this.state.get('compressor')
     const { currentTime } = this.context
     const useLfo = frequency > 0
 
@@ -75,9 +75,11 @@ export class Synthie {
     }
 
     if (
-      this.compressor.threshold.value !== threshold
+      this.compressor.threshold.value !== threshold ||
+      this.compressor.knee.value !== knee
     ) {
       this.compressor.threshold.setValueAtTime(threshold, currentTime)
+      this.compressor.knee.setValueAtTime(knee, currentTime)
     }
 
     return useLfo
