@@ -4,6 +4,14 @@ function getRemoveActions (container) {
   )
 }
 
+function updateOutput (control) {
+  const output = control.nextElementSibling
+
+  if (output) {
+    output.value = control.value
+  }
+}
+
 const actions = {
   /**
    * @param {HTMLAnchorElement} target
@@ -49,12 +57,11 @@ export function initControls (containerId, state) {
   })
 
   container.addEventListener('input', event => {
-    const output = event.target.nextElementSibling
-
-    if (output) {
-      output.value = event.target.value
-    }
-
+    updateOutput(event.target)
     state.update()
+  })
+
+  container.querySelectorAll('input').forEach(control => {
+    updateOutput(control)
   })
 }

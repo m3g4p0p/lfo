@@ -7,6 +7,7 @@ export class Synthie {
     this.lfo = this.context.createOscillator()
     this.lfoGain = this.context.createGain()
     this.analyzer = this.context.createAnalyser()
+    this.compressor = this.context.createDynamicsCompressor()
     /** @type {HTMLCanvasElement} */
     this.canvas = document.getElementById('wave')
     this.canvasCtx = this.canvas.getContext('2d')
@@ -17,6 +18,9 @@ export class Synthie {
     this.lfo.frequency.setValueAtTime(2, 0)
     this.lfo.connect(this.lfoGain.gain)
     this.lfo.start()
+
+    this.compressor.connect(this.context.destination)
+    this.compressor.connect(this.analyzer)
 
     this.analyzer.fftSize = 2048
     this.canvasCtx.fillStyle = 'rgb(0, 0, 0)'
@@ -45,32 +49,37 @@ export class Synthie {
     }
   }
 
-  connectGain (source) {
+  connectSource (source) {
     const { frequency, lfoWaveform } = this.state.get('lfo')
-    const { currentTime, destination } = this.context
+    const { threshold, knee } = this.state.get('compressor')
+    const { currentTime } = this.context
     const useLfo = frequency > 0
 
     if (useLfo) {
       source.connect(this.lfoGain)
     } else {
-      source.connect(this.analyzer)
-      source.connect(destination)
+      source.connect(this.compressor)
     }
 
     if (
-      this.lfo.type === lfoWaveform &&
-      this.lfo.frequency.value === frequency
+      this.lfo.type !== lfoWaveform ||
+      this.lfo.frequency.value !== frequency
     ) {
-      return useLfo
+      if (useLfo) {
+        this.lfo.type = lfoWaveform
+        this.lfo.frequency.setValueAtTime(frequency, currentTime)
+        this.lfoGain.connect(this.compressor)
+      } else {
+        this.lfoGain.disconnect()
+      }
     }
 
-    if (useLfo) {
-      this.lfo.type = lfoWaveform
-      this.lfo.frequency.setValueAtTime(frequency, currentTime)
-      this.lfoGain.connect(this.analyzer)
-      this.lfoGain.connect(destination)
-    } else {
-      this.lfoGain.disconnect()
+    if (
+      this.compressor.threshold.value !== threshold ||
+      this.compressor.knee.value !== knee
+    ) {
+      this.compressor.threshold.setValueAtTime(threshold, currentTime)
+      this.compressor.knee.setValueAtTime(knee, currentTime)
     }
 
     return useLfo
@@ -84,7 +93,7 @@ export class Synthie {
     const { currentTime } = this.context
     const { attack, oscillators } = this.state.get()
     const sweep = this.context.createGain()
-    const useLfo = this.connectGain(sweep)
+    const useLfo = this.connectSource(sweep)
     const targetGain = (useLfo ? 0.5 : 1) / oscillators.length
 
     sweep.gain.setValueAtTime(0, currentTime)
