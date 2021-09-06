@@ -1,4 +1,4 @@
-import { handleEvents, toFrequency } from './util.js'
+import { toFrequency } from './util.js'
 import fuzz from './Guitar_Fuzz.js'
 
 export class Synthie {
@@ -8,9 +8,6 @@ export class Synthie {
     this.lfoGain = this.context.createGain()
     this.analyzer = this.context.createAnalyser()
     this.compressor = this.context.createDynamicsCompressor()
-    /** @type {HTMLCanvasElement} */
-    this.canvas = document.getElementById('wave')
-    this.canvasCtx = this.canvas.getContext('2d')
     this.settings = settings
     this.playing = {}
 
@@ -23,12 +20,6 @@ export class Synthie {
     this.compressor.connect(this.analyzer)
 
     this.analyzer.fftSize = 2048
-    this.canvasCtx.fillStyle = 'rgb(0, 0, 0)'
-    this.canvasCtx.strokeStyle = 'rgb(0, 255, 0)'
-    this.canvasCtx.lineWidth = 1
-
-    this.draw()
-    this.initPiano()
   }
 
   connect (device) {
@@ -37,30 +28,6 @@ export class Synthie {
 
   disconnect (device) {
     device.removeEventListener('midimessage', this)
-  }
-
-  initPiano () {
-    this.keys = document
-      .getElementById('piano')
-      .querySelectorAll('button')
-
-    handleEvents(this.keys, 'mousedown mouseenter', ({ target, buttons }) => {
-      if (buttons === 1) {
-        this.play(Number(target.value))
-      }
-    })
-
-    handleEvents(this.keys, 'mouseup mouseleave', ({ target }) => {
-      this.stop(Number(target.value))
-    })
-  }
-
-  togglePressed () {
-    const pressed = Object.keys(this.playing).map(key => key % 12)
-
-    this.keys.forEach((key, index) => {
-      key.classList.toggle('pressed', pressed.includes(index))
-    })
   }
 
   handleEvent (event) {
@@ -139,8 +106,6 @@ export class Synthie {
         return osc
       })
     }
-
-    this.togglePressed()
   }
 
   stop (key) {
@@ -161,34 +126,5 @@ export class Synthie {
     }, release * 1000)
 
     delete this.playing[key]
-    this.togglePressed()
-  }
-
-  draw () {
-    const { width, height } = this.canvas
-    const bufferLength = this.analyzer.frequencyBinCount
-    const sliceWidth = width / bufferLength
-    const dataArray = new Uint8Array(bufferLength)
-
-    this.analyzer.getByteTimeDomainData(dataArray)
-    this.canvasCtx.lineWidth = 2
-    this.canvasCtx.clearRect(0, 0, width, height)
-    this.canvasCtx.fillRect(0, 0, width, height)
-    this.canvasCtx.beginPath()
-
-    for (let i = 0; i < bufferLength; i++) {
-      const v = dataArray[i] / 128
-      const x = i * sliceWidth
-      const y = v * height / 2
-
-      if (i === 0) {
-        this.canvasCtx.moveTo(x, y)
-      } else {
-        this.canvasCtx.lineTo(x, y)
-      }
-    }
-
-    this.canvasCtx.stroke()
-    window.requestAnimationFrame(() => this.draw())
   }
 }

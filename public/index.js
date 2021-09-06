@@ -1,4 +1,7 @@
 import { initControls } from './controls.js'
+import { initPiano } from './piano.js'
+import { initRecorder } from './recorder.js'
+import { initVisualization } from './visualization.js'
 import { Synthie } from './multi-osc-lfo.js'
 import { State } from './state.js'
 
@@ -37,3 +40,6 @@ navigator.requestMIDIAccess().then(access => {
 })
 
 initControls('controls', settings)
+initPiano('piano', synthie)
+initVisualization('wave', synthie)
+initRecorder(synthie)
