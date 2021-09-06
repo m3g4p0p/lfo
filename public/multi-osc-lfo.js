@@ -44,8 +44,10 @@ export class Synthie {
       .getElementById('piano')
       .querySelectorAll('button')
 
-    handleEvents(this.keys, 'mousedown', ({ target }) => {
-      this.play(Number(target.value))
+    handleEvents(this.keys, 'mousedown mouseenter', ({ target, buttons }) => {
+      if (buttons === 1) {
+        this.play(Number(target.value))
+      }
     })
 
     handleEvents(this.keys, 'mouseup mouseleave', ({ target }) => {
