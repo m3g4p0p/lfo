@@ -20,3 +20,16 @@ export function normalizeName (control) {
     .replace(/\[\]$/, '')
     .replace(/-(\w)/g, (_, char) => char.toUpperCase())
 }
+
+/**
+ * @param {NodeList} elements
+ * @param {string} events
+ * @param {function} callack
+ */
+export function handleEvents (elements, events, callack) {
+  elements.forEach(element => {
+    events.split(' ').forEach(event => {
+      element.addEventListener(event, callack)
+    })
+  })
+}

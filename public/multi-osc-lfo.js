@@ -1,4 +1,4 @@
-import { toFrequency } from './util.js'
+import { handleEvents, toFrequency } from './util.js'
 import fuzz from './Guitar_Fuzz.js'
 
 export class Synthie {
@@ -28,6 +28,7 @@ export class Synthie {
     this.canvasCtx.lineWidth = 1
 
     this.draw()
+    this.initPiano()
   }
 
   connect (device) {
@@ -36,6 +37,28 @@ export class Synthie {
 
   disconnect (device) {
     device.removeEventListener('midimessage', this)
+  }
+
+  initPiano () {
+    this.keys = document
+      .getElementById('piano')
+      .querySelectorAll('button')
+
+    handleEvents(this.keys, 'mousedown', ({ target }) => {
+      this.play(Number(target.value))
+    })
+
+    handleEvents(this.keys, 'mouseup mouseleave', ({ target }) => {
+      this.stop(Number(target.value))
+    })
+  }
+
+  togglePressed () {
+    const pressed = Object.keys(this.playing).map(key => key % 12)
+
+    this.keys.forEach((key, index) => {
+      key.classList.toggle('pressed', pressed.includes(index))
+    })
   }
 
   handleEvent (event) {
@@ -114,6 +137,8 @@ export class Synthie {
         return osc
       })
     }
+
+    this.togglePressed()
   }
 
   stop (key) {
@@ -134,6 +159,7 @@ export class Synthie {
     }, release * 1000)
 
     delete this.playing[key]
+    this.togglePressed()
   }
 
   draw () {
