@@ -28,90 +28,94 @@
     </div>
 
     <form class="controls" id="controls">
-      <fieldset>
-        <legend>Sweep</legend>
+      <div>
+        <fieldset>
+          <legend>Sweep</legend>
 
-        <label class="control">
-          <span>Attack</span>
-          <input name="attack" type="range" min="0" max="1" value="0.2" step="0.1">
-          <output></output>
-        </label>
+          <label class="control">
+            <span>Attack</span>
+            <input name="attack" type="range" min="0" max="1" value="0.2" step="0.1">
+            <output></output>
+          </label>
 
-        <label class="control">
-          <span>Release</span>
-          <input name="release" type="range" min="0" max="1" value="0.5" step="0.1">
-          <output></output>
-        </label>
-      </fieldset>
+          <label class="control">
+            <span>Release</span>
+            <input name="release" type="range" min="0" max="1" value="0.5" step="0.1">
+            <output></output>
+          </label>
+        </fieldset>
 
-      <fieldset name="lfo">
-        <legend>LFO</legend>
+        <fieldset name="lfo">
+          <legend>LFO</legend>
 
-        <label class="control">
-          <span>Waveform</span>
+          <label class="control">
+            <span>Waveform</span>
 
-          <select name="lfo-waveform">
-            <option value="sine">Sine</option>
-            <option value="square">Square</option>
-            <option value="sawtooth">Sawtooth</option>
-            <option value="triangle">Triangle</option>
-          </select>
-        </label>
+            <select name="lfo-waveform">
+              <option value="sine">Sine</option>
+              <option value="square">Square</option>
+              <option value="sawtooth">Sawtooth</option>
+              <option value="triangle">Triangle</option>
+            </select>
+          </label>
 
-        <label class="control">
-          <span>Frequency</span>
-          <input name="frequency" type="range" min="0" max="10" value="2" step="0.1">
-          <output></output>
-        </label>
-      </fieldset>
+          <label class="control">
+            <span>Frequency</span>
+            <input name="frequency" type="range" min="0" max="10" value="2" step="0.1">
+            <output></output>
+          </label>
+        </fieldset>
 
-      <fieldset name="compressor">
-        <legend>Compressor</legend>
+        <fieldset name="compressor">
+          <legend>Compressor</legend>
 
-        <label class="control">
-          <span>Threshold</span>
-          <input name="threshold" type="range" min="-100" max="0" value="-24" step="1">
-          <output></output>
-        </label>
+          <label class="control">
+            <span>Threshold</span>
+            <input name="threshold" type="range" min="-100" max="0" value="-24" step="1">
+            <output></output>
+          </label>
 
-        <label class="control">
-          <span>Knee</span>
-          <input name="knee" type="range" min="0" max="40" value="30" step="1">
-          <output></output>
-        </label>
-      </fieldset>
+          <label class="control">
+            <span>Knee</span>
+            <input name="knee" type="range" min="0" max="40" value="30" step="1">
+            <output></output>
+          </label>
+        </fieldset>
+      </div>
 
-      <fieldset name="oscillators[]">
-        <legend>Oscillator</legend>
+      <div>
+        <fieldset class="oscillator" name="oscillators[]">
+          <legend>Oscillator</legend>
 
-        <label class="control">
-          <span>Waveform</span>
+          <label class="control">
+            <span>Waveform</span>
 
-          <select name="waveform[]">
-            <option value="sine">Sine</option>
-            <option value="square">Square</option>
-            <option value="sawtooth">Sawtooth</option>
-            <option value="triangle">Triangle</option>
-          </select>
-        </label>
+            <select name="waveform[]">
+              <option value="sine">Sine</option>
+              <option value="square">Square</option>
+              <option value="sawtooth">Sawtooth</option>
+              <option value="triangle">Triangle</option>
+            </select>
+          </label>
 
-        <label class="control">
-          <span>Octave</span>
-          <input name="octave[]" type="range" min="-3" max="3" value="0" step="1">
-          <output></output>
-        </label>
+          <label class="control">
+            <span>Octave</span>
+            <input name="octave[]" type="range" min="-3" max="3" value="0" step="1">
+            <output></output>
+          </label>
 
-        <label class="control">
-          <span>Pitch</span>
-          <input name="pitch[]" type="range" min="-12" max="12" value="0" step="1">
-          <output></output>
-        </label>
+          <label class="control">
+            <span>Pitch</span>
+            <input name="pitch[]" type="range" min="-12" max="12" value="0" step="1">
+            <output></output>
+          </label>
 
-        <div class="actions">
-          <button type="button" data-action="clone">add</button>
-          <button type="button" data-action="remove" disabled>remove</button>
-        </div>
-      </fieldset>
+          <div class="actions">
+            <button type="button" data-action="clone">add</button>
+            <button type="button" data-action="remove" disabled>remove</button>
+          </div>
+        </fieldset>
+      </div>
     </form>
 
     <div id="devices" class="devices"></div>

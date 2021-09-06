@@ -44,11 +44,11 @@ label span {
 fieldset,
 .controls {
   display: inline-flex;
-  flex-direction: column;
 }
 
 .controls {
   margin-top: 2em;
+  flex-wrap: wrap;
 }
 
 fieldset,
@@ -64,8 +64,13 @@ legend {
 
 fieldset {
   position: relative;
+  flex-direction: column;
   border: none;
   padding: 0;
+}
+
+.oscillator {
+  margin-right: 50%;
 }
 
 .actions {
