@@ -47,6 +47,10 @@ fieldset,
   flex-direction: column;
 }
 
+.controls {
+  margin-top: 2em;
+}
+
 fieldset,
 legend {
   margin: 1em 0;
