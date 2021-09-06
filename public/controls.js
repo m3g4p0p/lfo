@@ -43,7 +43,7 @@ const actions = {
   }
 }
 
-export function initControls (containerId, state) {
+export function initControls (containerId, settings) {
   const container = document.getElementById(containerId)
 
   container.addEventListener('click', event => {
@@ -52,13 +52,13 @@ export function initControls (containerId, state) {
 
     if (action) {
       actions[action](target)
-      state.update()
+      settings.update()
     }
   })
 
   container.addEventListener('input', event => {
     updateOutput(event.target)
-    state.update()
+    settings.update()
   })
 
   container.querySelectorAll('input').forEach(control => {

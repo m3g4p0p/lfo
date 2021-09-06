@@ -2,8 +2,8 @@ import { initControls } from './controls.js'
 import { Synthie } from './multi-osc-lfo.js'
 import { State } from './state.js'
 
-const state = new State('controls')
-const synthie = new Synthie(state)
+const settings = new State('controls')
+const synthie = new Synthie(settings)
 
 function createButton (device) {
   const container = document.getElementById('devices')
@@ -36,4 +36,4 @@ navigator.requestMIDIAccess().then(access => {
   button.click()
 })
 
-initControls('controls', state)
+initControls('controls', settings)
